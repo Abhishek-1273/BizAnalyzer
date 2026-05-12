@@ -32,6 +32,7 @@ REPORTS_FOLDER = os.path.join(BASE_DIR, "..", "reports")
 
 #Set the upload folder
 app.config['UPLOAD_FOLDER'] = '../data/upload'
+app.config["REPORTS_FOLDER"] = REPORTS_FOLDER
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 if not os.path.exists(app.config["REPORTS_FOLDER"]):
