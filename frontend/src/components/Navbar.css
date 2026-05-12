@@ -1,0 +1,112 @@
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(9,9,15,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 1000;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.nav-brand-icon {
+  width: 30px;
+  height: 30px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-brand-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: white;
+}
+
+.nav-brand-name {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.nav-brand-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  background: var(--accent-dim);
+  border: 1px solid rgba(79,110,247,0.2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-default);
+  background: var(--bg-elevated);
+}
+
+.nav-btn.primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: white;
+  font-weight: 600;
+}
+.nav-btn.primary:hover {
+  background: var(--accent-light);
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.nav-btn.danger {
+  color: var(--rose);
+  border-color: rgba(244,63,94,0.15);
+}
+.nav-btn.danger:hover {
+  background: var(--rose-dim);
+  border-color: rgba(244,63,94,0.3);
+}
+
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-subtle);
+}
