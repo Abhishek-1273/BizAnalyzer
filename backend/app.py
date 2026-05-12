@@ -25,10 +25,9 @@ app = Flask(__name__)  # initialize the flask app
 CORS(app)  # Enable CORS for frontend-backend communication
 
 # Set the upload folder
-UPLOAD_FOLDER = "../data/upload"  # path
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER  # configure the upload folder
-REPORTS_FOLDER = "../reports"
-app.config["REPORTS_FOLDER"] = REPORTS_FOLDER
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # path
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "..", "data", "upload")  # configure the upload folder
+REPORTS_FOLDER = os.path.join(BASE_DIR, "..", "reports")
 
 
 #Set the upload folder
@@ -618,7 +617,7 @@ def generate_pdf():
             print(f"   - Path: {filepath}")
         else:
             print(f"❌ PDF file not created!")
-            return jsonify({'error': 'PDF creation failed'}), 500
+            return jsonify({'error': 'PDF creation failed'}),
         
         print("\n" + "="*60)
         print("📥 Sending PDF to client...")
@@ -647,4 +646,5 @@ def generate_pdf():
     
 # running the app
 if __name__ == "__main__":
-    app.run(debug=True)
+    port =int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
