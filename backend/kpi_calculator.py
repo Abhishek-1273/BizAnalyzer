@@ -447,5 +447,164 @@ class KPICalculator:
             'avg_revenue_per_booking': self.calculate_avg_revenue_per_booking(),
             'operating_efficiency': self.calculate_operating_efficiency(),
             'cash_flow_health': self.cash_flow_health(),
-            'market_position': self.market_position_indicator()
+            'market_position': self.market_position_indicator(),
+
+            # Food Business KPIs
+            'food_cost_percentage': self.calculate_food_cost_percentage(),
+            'best_selling_item': self.best_selling_item(),
+            'most_profitable_item': self.most_profitable_item(),
+            'dead_menu_items': self.dead_menu_items(),
+            'menu_item_contribution': self.menu_item_contribution(),
+            'revenue_concentration_risk': self.revenue_concentration_risk(),
+            'average_daily_revenue': self.average_daily_revenue(),
+            'peak_sales_day': self.peak_sales_day(),
+            'worst_sales_day': self.worst_sales_day(),
+            'weekend_vs_weekday': self.weekend_vs_weekday_revenue(),
+            'month_over_month_growth': self.month_over_month_growth(),
+            'best_month': self.best_month(),
+            'gross_profit_per_unit': self.gross_profit_per_unit(),
         }
+
+    #----------------------------------FOOD BUSINESS KPIs------------------------------#
+
+    # 33. Food Cost % (Refer: COGS / Revenue * 100) — ideal: 28-35%
+    def calculate_food_cost_percentage(self):
+        revenue = self.calculate_total_revenue()
+        if revenue == 0:
+            return 0
+        food_cost = self.df["Costs_Of_Goods"].sum()
+        pct = round((food_cost / revenue) * 100, 2)
+        if pct <= 35:
+            status = "Healthy"
+        elif pct <= 45:
+            status = "Moderate"
+        else:
+            status = "High - Review Costs"
+        return {"percentage": pct, "status": status, "ideal_range": "28-35%"}
+
+    # 34. Best Selling Item by Units (Refer: Most ordered item)
+    def best_selling_item(self):
+        if "Units_sold" not in self.df.columns:
+            return None
+        grouped = self.df.groupby("Product_Name")["Units_sold"].sum()
+        best = grouped.idxmax()
+        return {"item": best, "units_sold": int(grouped[best])}
+
+    # 35. Most Profitable Item (Refer: Highest margin per item)
+    def most_profitable_item(self):
+        self.df["item_profit"] = (
+            self.df["Revenue"]
+            - self.df["Costs_Of_Goods"]
+            - self.df["Marketing_Cost"]
+            - self.df["Logistic_Cost"]
+            - self.df["Other_Cost"]
+        )
+        grouped = self.df.groupby("Product_Name")["item_profit"].sum()
+        best = grouped.idxmax()
+        return {"item": best, "total_profit": round(float(grouped[best]), 2)}
+
+    # 36. Dead Menu Items (Refer: Bottom 5 items by units sold)
+    def dead_menu_items(self):
+        if "Units_sold" not in self.df.columns:
+            return []
+        grouped = self.df.groupby("Product_Name")["Units_sold"].sum().sort_values()
+        bottom = grouped.head(5)
+        return [{"item": k, "units_sold": int(v)} for k, v in bottom.items()]
+
+    # 37. Menu Item Revenue Contribution % (Refer: Each item's share of total revenue)
+    def menu_item_contribution(self):
+        total = self.calculate_total_revenue()
+        if total == 0:
+            return {}
+        grouped = self.df.groupby("Product_Name")["Revenue"].sum()
+        result = {k: round((v / total) * 100, 2) for k, v in grouped.items()}
+        return dict(sorted(result.items(), key=lambda x: x[1], reverse=True))
+
+    # 38. Revenue Concentration Risk (Refer: Top 3 items % of total revenue)
+    def revenue_concentration_risk(self):
+        contribution = self.menu_item_contribution()
+        if not contribution:
+            return {}
+        top3 = list(contribution.items())[:3]
+        top3_pct = sum(v for _, v in top3)
+        if top3_pct > 70:
+            risk = "High Risk - Too dependent on few items"
+        elif top3_pct > 50:
+            risk = "Moderate Risk - Diversify menu"
+        else:
+            risk = "Low Risk - Good menu diversity"
+        return {
+            "top_3_items": [{"item": k, "contribution_pct": v} for k, v in top3],
+            "top_3_revenue_pct": round(top3_pct, 2),
+            "risk_level": risk
+        }
+
+    # 39. Average Daily Revenue (Refer: Revenue / number of days)
+    def average_daily_revenue(self):
+        self.df["Date"] = pd.to_datetime(self.df["Date"])
+        days = (self.df["Date"].max() - self.df["Date"].min()).days + 1
+        total = self.calculate_total_revenue()
+        return round(total / days, 2) if days > 0 else 0
+
+    # 40. Peak Sales Day (Refer: Day with highest revenue)
+    def peak_sales_day(self):
+        self.df["Date"] = pd.to_datetime(self.df["Date"])
+        daily = self.df.groupby("Date")["Revenue"].sum()
+        peak = daily.idxmax()
+        return {"date": str(peak.date()), "revenue": round(float(daily[peak]), 2)}
+
+    # 41. Worst Sales Day (Refer: Day with lowest revenue)
+    def worst_sales_day(self):
+        self.df["Date"] = pd.to_datetime(self.df["Date"])
+        daily = self.df.groupby("Date")["Revenue"].sum()
+        worst = daily.idxmin()
+        return {"date": str(worst.date()), "revenue": round(float(daily[worst]), 2)}
+
+    # 42. Weekend vs Weekday Revenue (Refer: Sat/Sun vs Mon-Fri)
+    def weekend_vs_weekday_revenue(self):
+        self.df["Date"] = pd.to_datetime(self.df["Date"])
+        self.df["day_type"] = self.df["Date"].dt.dayofweek.apply(
+            lambda x: "Weekend" if x >= 5 else "Weekday"
+        )
+        grouped = self.df.groupby("day_type")["Revenue"].sum()
+        total = grouped.sum()
+        result = {}
+        for day_type, rev in grouped.items():
+            result[day_type] = {
+                "revenue": round(float(rev), 2),
+                "percentage": round((rev / total) * 100, 2) if total > 0 else 0
+            }
+        better = "Weekend" if result.get("Weekend", {}).get("revenue", 0) > result.get("Weekday", {}).get("revenue", 0) else "Weekday"
+        result["better_performing"] = better
+        return result
+
+    # 43. Month over Month Growth (Refer: Each month's growth vs previous)
+    def month_over_month_growth(self):
+        self.df["Date"] = pd.to_datetime(self.df["Date"])
+        self.df["Month"] = self.df["Date"].dt.to_period("M")
+        monthly = self.df.groupby("Month")["Revenue"].sum()
+        mom = {}
+        months = list(monthly.items())
+        for i in range(1, len(months)):
+            prev_rev = months[i - 1][1]
+            curr_rev = months[i][1]
+            growth = round(((curr_rev - prev_rev) / prev_rev) * 100, 2) if prev_rev > 0 else 0
+            mom[str(months[i][0])] = growth
+        return mom
+
+    # 44. Best Month (Refer: Highest revenue month)
+    def best_month(self):
+        self.df["Date"] = pd.to_datetime(self.df["Date"])
+        self.df["Month"] = self.df["Date"].dt.to_period("M")
+        monthly = self.df.groupby("Month")["Revenue"].sum()
+        best = monthly.idxmax()
+        return {"month": str(best), "revenue": round(float(monthly[best]), 2)}
+
+    # 45. Gross Profit Per Item (Refer: Avg profit per unit sold)
+    def gross_profit_per_unit(self):
+        total_units = self.df["Units_sold"].sum()
+        gross = self.calculate_gross_profit()
+        if total_units == 0:
+            return 0
+        return round(gross / total_units, 2)
+
