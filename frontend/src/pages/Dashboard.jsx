@@ -309,7 +309,11 @@ export default function Dashboard() {
   const handleDownloadPdf = async () => {
     setPdfLoading(true)
     try {
-      const blob = await generatePdf(businessData.business_id)
+      const blob = await generatePdf(
+        businessData.kpis,
+        businessData.profile,
+        businessData.recommendations
+      )
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url; a.download = 'business_report.pdf'; a.click()

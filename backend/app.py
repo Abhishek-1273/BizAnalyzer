@@ -35,8 +35,7 @@ app.config['UPLOAD_FOLDER'] = '../data/upload'
 app.config["REPORTS_FOLDER"] = REPORTS_FOLDER
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
-if not os.path.exists(app.config["REPORTS_FOLDER"]):
-    os.makedirs(app.config["REPORTS_FOLDER"],exist_ok=True)
+os.makedirs(app.config["REPORTS_FOLDER"], exist_ok=True)
 print(f"📁 Upload Folder: {os.path.abspath(UPLOAD_FOLDER)}")
 print(f"📁 Reports Folder: {os.path.abspath(REPORTS_FOLDER)}")
 
