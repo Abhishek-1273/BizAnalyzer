@@ -42,6 +42,8 @@
   gap: 20px;
 }
 
+.dash-business-info {}
+
 .dash-biz-name {
   font-family: var(--font-display);
   font-size: 1.6rem;
@@ -207,7 +209,7 @@
 
 .kpi-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 10px;
 }
 
@@ -412,3 +414,99 @@
   .overview-grid { grid-template-columns: repeat(2, 1fr); }
   .kpi-list { grid-template-columns: 1fr; }
 }
+
+/* ─── Food Analytics ─────────────────────────── */
+.food-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.food-card { margin-bottom: 0 !important; }
+
+.food-big-num {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 8px 0 2px;
+}
+.food-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.food-item-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 8px 0 4px;
+}
+.food-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Weekend vs Weekday */
+.wkd-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.wkd-item { flex: 1; text-align: center; }
+.wkd-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+.wkd-val { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.wkd-divider { width: 1px; height: 40px; background: var(--border); }
+
+/* Month over Month */
+.mom-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+.mom-item {
+  background: var(--card-bg, rgba(255,255,255,0.04));
+  border-radius: 8px;
+  padding: 8px 14px;
+  text-align: center;
+  min-width: 90px;
+}
+.mom-month { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; }
+.mom-val { font-size: 1rem; font-weight: 700; }
+.mom-val.pos { color: var(--emerald, #10b981); }
+.mom-val.neg { color: var(--rose, #f43f5e); }
+
+/* Dead Menu Items */
+.dead-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.dead-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(244,63,94,0.08);
+  border: 1px solid rgba(244,63,94,0.2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  min-width: 120px;
+}
+.dead-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+.dead-units { font-size: 0.75rem; color: var(--rose, #f43f5e); margin-top: 2px; }
+
+/* Revenue Concentration */
+.conc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border, rgba(255,255,255,0.06));
+}
+.conc-rank { font-size: 0.75rem; color: var(--text-muted); width: 20px; }
+.conc-name { flex: 1; font-size: 0.85rem; color: var(--text-primary); }
+.conc-pct { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+
+/* Menu Contribution Bar */
+.contrib-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.contrib-row { display: flex; align-items: center; gap: 10px; }
+.contrib-name { width: 160px; font-size: 0.8rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.contrib-bar-wrap { flex: 1; background: rgba(255,255,255,0.06); border-radius: 4px; height: 8px; overflow: hidden; }
+.contrib-bar { height: 100%; background: var(--accent, #6366f1); border-radius: 4px; transition: width 0.4s ease; }
+.contrib-pct { width: 44px; text-align: right; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }

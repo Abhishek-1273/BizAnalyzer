@@ -18,22 +18,31 @@ function OverviewSection({ businessData }) {
   const kpis = businessData.kpis || {}
 
   const cards = [
-    { label: 'Total Revenue', value: `₹${formatNumber(kpis.total_revenue)}`, accent: 'blue' },
-    { label: 'Net Profit', value: `₹${formatNumber(kpis.net_profit)}`,
+    { label: 'Total Revenue',     value: `₹${formatNumber(kpis.total_revenue)}`,         accent: 'blue' },
+    { label: 'Net Profit',        value: `₹${formatNumber(kpis.net_profit)}`,
       badge: kpis.profit_margin ? `${Number(kpis.profit_margin).toFixed(1)}%` : null,
-      badgeType: kpis.net_profit > 0 ? 'positive' : 'negative', accent: kpis.net_profit > 0 ? 'green' : 'red' },
-    { label: 'Profit Margin', value: `${Number(kpis.profit_margin || 0).toFixed(1)}%`, accent: 'blue' },
-    { label: 'Growth Rate', value: `${kpis.revenue_growth_rate || 'N/A'}%`, accent: 'green' },
-    { label: 'Shark Tank Score', value: `${kpis.shark_tank_score || 0} / 100`, accent: 'amber' },
-    { label: 'IPO Readiness', value: `${kpis.ipo_readiness || 0} / 100`, accent: 'blue' },
-    { label: 'Risk Score', value: `${kpis.risk_score || 0} / 100`, accent: kpis.risk_score > 70 ? 'red' : 'amber' },
-    { label: 'ROI', value: `${kpis.roi || 0}%`, accent: 'green' },
+      badgeType: kpis.net_profit > 0 ? 'positive' : 'negative',
+      accent: kpis.net_profit > 0 ? 'green' : 'red' },
+    { label: 'Profit Margin',     value: `${Number(kpis.profit_margin || 0).toFixed(1)}%`, accent: 'blue' },
+    { label: 'Growth Rate',       value: `${kpis.revenue_growth_rate || 'N/A'}%`,          accent: 'green' },
+    { label: 'Shark Tank Score',  value: `${kpis.shark_tank_score || 0} / 100`,            accent: 'amber' },
+    { label: 'IPO Readiness',     value: `${kpis.ipo_readiness || 0} / 100`,              accent: 'blue' },
+    { label: 'Risk Score',        value: `${kpis.risk_score || 0} / 100`,
+      accent: kpis.risk_score > 70 ? 'red' : 'amber' },
+    { label: 'Avg Daily Revenue', value: `₹${formatNumber(kpis.average_daily_revenue)}`,  accent: 'green' },
   ]
 
   const alerts = []
-  if (kpis.net_profit < 0) alerts.push({ type: 'danger', msg: 'Business is running at a loss. Focus on cost reduction.' })
-  if (kpis.risk_score > 70) alerts.push({ type: 'warning', msg: `High risk score (${kpis.risk_score}/100). Review your financial strategy.` })
-  if (kpis.growth_trajectory === 'Strong Growth') alerts.push({ type: 'success', msg: 'Strong growth trajectory detected.' })
+  if (kpis.net_profit < 0)
+    alerts.push({ type: 'danger', msg: 'Business is running at a loss. Focus on cost reduction.' })
+  if (kpis.risk_score > 70)
+    alerts.push({ type: 'warning', msg: `High risk score (${kpis.risk_score}/100). Review your financial strategy.` })
+  if (kpis.growth_trajectory === 'Strong Growth')
+    alerts.push({ type: 'success', msg: 'Strong growth trajectory detected.' })
+  if (kpis.cost_ratio?.status === 'High - Review Costs')
+    alerts.push({ type: 'warning', msg: `Cost of Goods is ${kpis.cost_ratio?.percentage}% of revenue — above ideal range of 28–35%.` })
+  if (kpis.revenue_concentration_risk?.risk_level?.startsWith('High'))
+    alerts.push({ type: 'warning', msg: `Revenue Concentration Risk: ${kpis.revenue_concentration_risk.risk_level}` })
 
   return (
     <div className="section-content">
@@ -65,31 +74,31 @@ function KPISection({ kpis }) {
 
   const categories = {
     'Basic Metrics': [
-      ['Total Revenue', `₹${formatNumber(kpis.total_revenue)}`, 'Sum of all revenue'],
-      ['Total Costs', `₹${formatNumber(kpis.total_cost)}`, 'Sum of all expenses'],
-      ['Net Profit', `₹${formatNumber(kpis.net_profit)}`, 'Revenue minus costs'],
-      ['Profit Margin', `${Number(kpis.profit_margin||0).toFixed(2)}%`, 'Profit as % of revenue'],
-      ['Gross Profit', `₹${formatNumber(kpis.gross_profit)}`, 'Revenue minus COGS'],
+      ['Total Revenue',    `₹${formatNumber(kpis.total_revenue)}`,              'Sum of all revenue'],
+      ['Total Costs',      `₹${formatNumber(kpis.total_cost)}`,                 'Sum of all expenses'],
+      ['Net Profit',       `₹${formatNumber(kpis.net_profit)}`,                 'Revenue minus costs'],
+      ['Profit Margin',    `${Number(kpis.profit_margin||0).toFixed(2)}%`,      'Profit as % of revenue'],
+      ['Gross Profit',     `₹${formatNumber(kpis.gross_profit)}`,               'Revenue minus COGS'],
     ],
     'Advanced Financials': [
-      ['EBITDA', `₹${formatNumber(kpis.ebitda)}`, 'Earnings before interest & tax'],
-      ['Operating Profit', `₹${formatNumber(kpis.operating_profit)}`, 'Profit from core operations'],
-      ['Burn Rate', `₹${formatNumber(kpis.burn_rate)}/mo`, 'Monthly cash spend'],
-      ['Runway (Months)', kpis.runway_months || 'N/A', 'Months before cash runs out'],
-      ['Break-even Point', `₹${formatNumber(kpis.break_even_point)}`, 'Revenue to cover all costs'],
+      ['EBITDA',           `₹${formatNumber(kpis.ebitda)}`,                     'Earnings before interest & tax'],
+      ['Operating Profit', `₹${formatNumber(kpis.operating_profit)}`,           'Profit from core operations'],
+      ['Burn Rate',        `₹${formatNumber(kpis.burn_rate)}/mo`,               'Monthly cash spend'],
+      ['Runway (Months)',  kpis.runway_months || 'N/A',                         'Months before cash runs out'],
+      ['Break-even Point', `₹${formatNumber(kpis.break_even_point)}`,           'Revenue to cover all costs'],
     ],
     'Growth & Performance': [
-      ['Revenue Growth Rate', `${kpis.revenue_growth_rate || 0}%`, 'Month-over-month growth'],
-      ['ROI', `${kpis.roi || 0}%`, 'Return on investment'],
-      ['Customer LTV', `₹${formatNumber(kpis.customer_lifetime_value)}`, 'Avg revenue per customer'],
-      ['Avg Order Value', `₹${formatNumber(kpis.average_order_value)}`, 'Mean transaction size'],
-      ['Growth Trajectory', kpis.growth_trajectory || 'N/A', 'Overall business trend'],
+      ['Revenue Growth Rate', `${kpis.revenue_growth_rate || 0}%`,             'First to last month growth'],
+      ['ROI',              `${kpis.roi || 0}%`,                                 'Return on investment'],
+      ['Avg Daily Revenue',`₹${formatNumber(kpis.average_daily_revenue)}`,      'Revenue per day average'],
+      ['Profit / Unit',    `₹${formatNumber(kpis.gross_profit_per_unit)}`,      'Avg profit per unit sold'],
+      ['Growth Trajectory', kpis.growth_trajectory || 'N/A',                   'Overall business trend'],
     ],
     'Business Scores': [
-      ['Shark Tank Score', `${kpis.shark_tank_score || 0} / 100`, 'Investment attractiveness'],
-      ['IPO Readiness', `${kpis.ipo_readiness || 0} / 100`, 'Readiness for public offering'],
-      ['Risk Score', `${kpis.risk_score || 0} / 100`, 'Overall business risk level'],
-      ['Scalability Score', `${kpis.scalability_score || 0} / 100`, 'Potential for growth at scale'],
+      ['Shark Tank Score', `${kpis.shark_tank_score || 0} / 100`,              'Investment attractiveness'],
+      ['IPO Readiness',    `${kpis.ipo_readiness || 0} / 100`,                 'Readiness for public offering'],
+      ['Risk Score',       `${kpis.risk_score || 0} / 100`,                    'Overall business risk level'],
+      ['Scalability Score',`${kpis.scalability_score || 0} / 100`,             'Potential for growth at scale'],
     ],
   }
 
@@ -115,6 +124,185 @@ function KPISection({ kpis }) {
   )
 }
 
+// ─── Product Analytics (works for ANY business) ──────
+
+function ProductAnalyticsSection({ kpis }) {
+  if (!kpis) return <div className="alert alert-warning">No analytics data available.</div>
+
+  // use food_cost_percentage OR cost_ratio — whichever backend sends
+  const cr = kpis.food_cost_percentage || kpis.cost_ratio || {}
+  const crColor = cr.status === 'Healthy' ? 'var(--emerald)'
+    : cr.status === 'Moderate' ? '#f59e0b' : cr.status ? 'var(--rose)' : 'var(--accent)'
+
+  const risk  = kpis.revenue_concentration_risk || {}
+  const riskColor = risk.risk_level?.startsWith('High')     ? 'var(--rose)'
+    : risk.risk_level?.startsWith('Moderate') ? '#f59e0b' : 'var(--emerald)'
+
+  const wkd = kpis.weekend_vs_weekday || {}
+  const mom = kpis.month_over_month_growth || {}
+
+  const bestSell   = kpis.best_selling_item    || {}
+  const bestProfit = kpis.most_profitable_item || {}
+  const peakDay    = kpis.peak_sales_day       || {}
+  const worstDay   = kpis.worst_sales_day      || {}
+  const bestMonth  = kpis.best_month           || {}
+  const deadItems  = kpis.dead_menu_items      || []
+  const contrib    = kpis.menu_item_contribution || {}
+
+  return (
+    <div className="section-content">
+
+      {/* Row 1 — Cost Ratio + Best Selling + Most Profitable */}
+      <div className="food-row">
+        {cr.percentage != null && (
+          <div className="rec-card food-card" style={{ borderLeftColor: crColor }}>
+            <div className="rec-title">📦 Cost of Goods %</div>
+            <div className="food-big-num" style={{ color: crColor }}>{cr.percentage}%</div>
+            <div className="food-status" style={{ color: crColor }}>{cr.status}</div>
+            <div className="food-hint">Ideal range: {cr.ideal_range || '28–35%'}</div>
+          </div>
+        )}
+
+        {bestSell.item && (
+          <div className="rec-card food-card" style={{ borderLeftColor: 'var(--emerald)' }}>
+            <div className="rec-title">🏆 Best Selling Item</div>
+            <div className="food-item-name">{bestSell.item}</div>
+            <div className="food-hint">{formatNumber(bestSell.units_sold)} units sold</div>
+          </div>
+        )}
+
+        {bestProfit.item && (
+          <div className="rec-card food-card" style={{ borderLeftColor: 'var(--accent)' }}>
+            <div className="rec-title">💰 Most Profitable Item</div>
+            <div className="food-item-name">{bestProfit.item}</div>
+            <div className="food-hint">₹{formatNumber(bestProfit.total_profit)} total profit</div>
+          </div>
+        )}
+      </div>
+
+      {/* Row 2 — Peak Day + Worst Day + Weekend vs Weekday */}
+      <div className="food-row">
+        {peakDay.date && (
+          <div className="rec-card food-card" style={{ borderLeftColor: 'var(--emerald)' }}>
+            <div className="rec-title">📈 Peak Sales Day</div>
+            <div className="food-item-name">₹{formatNumber(peakDay.revenue)}</div>
+            <div className="food-hint">{peakDay.date}</div>
+          </div>
+        )}
+
+        {worstDay.date && (
+          <div className="rec-card food-card" style={{ borderLeftColor: 'var(--rose)' }}>
+            <div className="rec-title">📉 Worst Sales Day</div>
+            <div className="food-item-name" style={{ color: 'var(--rose)' }}>₹{formatNumber(worstDay.revenue)}</div>
+            <div className="food-hint">{worstDay.date}</div>
+          </div>
+        )}
+
+        {wkd.Weekday && (
+          <div className="rec-card food-card" style={{ borderLeftColor: '#a78bfa' }}>
+            <div className="rec-title">📅 Weekend vs Weekday</div>
+            <div className="wkd-row">
+              <div className="wkd-item">
+                <div className="wkd-label">Weekday</div>
+                <div className="wkd-val">₹{formatNumber(wkd.Weekday?.revenue)}</div>
+                <div className="food-hint">{wkd.Weekday?.percentage}%</div>
+              </div>
+              <div className="wkd-divider" />
+              <div className="wkd-item">
+                <div className="wkd-label">Weekend</div>
+                <div className="wkd-val">₹{formatNumber(wkd.Weekend?.revenue)}</div>
+                <div className="food-hint">{wkd.Weekend?.percentage}%</div>
+              </div>
+            </div>
+            <div className="food-hint" style={{ marginTop: 8 }}>
+              Better: <strong>{wkd.better_performing}</strong>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Row 3 — Best Month + Revenue Concentration Risk */}
+      <div className="food-row">
+        {bestMonth.month && (
+          <div className="rec-card food-card" style={{ borderLeftColor: 'var(--emerald)' }}>
+            <div className="rec-title">🗓️ Best Month</div>
+            <div className="food-item-name">{bestMonth.month}</div>
+            <div className="food-hint">₹{formatNumber(bestMonth.revenue)}</div>
+          </div>
+        )}
+
+        {risk.risk_level && (
+          <div className="rec-card food-card" style={{ flex: 2, borderLeftColor: riskColor }}>
+            <div className="rec-title">⚠️ Revenue Concentration Risk</div>
+            <div className="food-status" style={{ color: riskColor, marginBottom: 8 }}>{risk.risk_level}</div>
+            <div className="food-hint">Top 3 items = {risk.top_3_revenue_pct}% of revenue</div>
+            <div style={{ marginTop: 8 }}>
+              {(risk.top_3_items || []).map((item, i) => (
+                <div key={i} className="conc-row">
+                  <span className="conc-rank">#{i + 1}</span>
+                  <span className="conc-name">{item.item}</span>
+                  <span className="conc-pct">{item.contribution_pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Month over Month Growth */}
+      {Object.keys(mom).length > 0 && (
+        <div className="rec-card" style={{ borderLeftColor: 'var(--accent)' }}>
+          <div className="rec-title">📊 Month over Month Growth</div>
+          <div className="mom-grid">
+            {Object.entries(mom).map(([month, growth]) => (
+              <div key={month} className="mom-item">
+                <div className="mom-month">{month}</div>
+                <div className={`mom-val ${growth >= 0 ? 'pos' : 'neg'}`}>
+                  {growth >= 0 ? '▲' : '▼'} {Math.abs(growth)}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Low Performing Items */}
+      {deadItems.length > 0 && (
+        <div className="rec-card" style={{ borderLeftColor: 'var(--rose)' }}>
+          <div className="rec-title">🪦 Low Performing Items (Bottom 5 — Consider Reviewing)</div>
+          <div className="dead-grid">
+            {deadItems.map((item, i) => (
+              <div key={i} className="dead-item">
+                <span className="dead-name">{item.item}</span>
+                <span className="dead-units">{item.units_sold} units</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Product Revenue Contribution */}
+      {Object.keys(contrib).length > 0 && (
+        <div className="rec-card" style={{ borderLeftColor: 'var(--accent)' }}>
+          <div className="rec-title">📋 Product Revenue Contribution (Top 10)</div>
+          <div className="contrib-list">
+            {Object.entries(contrib).slice(0, 10).map(([item, pct]) => (
+              <div key={item} className="contrib-row">
+                <span className="contrib-name">{item}</span>
+                <div className="contrib-bar-wrap">
+                  <div className="contrib-bar" style={{ width: `${Math.min(pct * 3, 100)}%` }} />
+                </div>
+                <span className="contrib-pct">{pct}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  )
+}
+
 // ─── Charts ─────────────────────────────────────────
 
 function ChartsSection({ charts }) {
@@ -122,28 +310,22 @@ function ChartsSection({ charts }) {
     return <div className="alert alert-warning">Charts unavailable. Backend chart generation may have failed.</div>
 
   const items = [
-    { key: 'revenue_trend', title: 'Revenue Trend', badge: 'Time Series' },
-    { key: 'product_comparison', title: 'Product Revenue', badge: 'Comparison' },
-    { key: 'forecast', title: 'Sales Forecast', badge: 'ML Model', wide: true },
-    { key: 'expense_breakdown', title: 'Expense Breakdown', badge: 'Distribution' },
+    { key: 'revenue_trend',      title: 'Revenue Trend',      badge: 'Time Series' },
+    { key: 'product_comparison', title: 'Product Revenue',    badge: 'Comparison' },
+    { key: 'forecast',           title: 'Sales Forecast',     badge: 'ML Model', wide: true },
+    { key: 'expense_breakdown',  title: 'Expense Breakdown',  badge: 'Distribution' },
   ]
-
-  const available = items.filter(({ key }) => charts[key])
 
   return (
     <div className="section-content">
       <div className="charts-grid">
-        {available.map(({ key, title, badge, wide }) => (
+        {items.filter(({ key }) => charts[key]).map(({ key, title, badge, wide }) => (
           <div key={key} className={`chart-card${wide ? ' chart-wide' : ''}`}>
             <div className="chart-card-header">
               <div className="chart-title">{title}</div>
               <div className="chart-badge">{badge}</div>
             </div>
-            <img
-              src={`data:image/png;base64,${charts[key]}`}
-              alt={title}
-              className="chart-img"
-            />
+            <img src={`data:image/png;base64,${charts[key]}`} alt={title} className="chart-img" />
           </div>
         ))}
       </div>
@@ -213,7 +395,6 @@ function RecommendationsSection({ recommendations }) {
           </div>
         </div>
       )}
-
       {data.summary && (
         <>
           <div className="rec-card">
@@ -234,7 +415,6 @@ function RecommendationsSection({ recommendations }) {
           )}
         </>
       )}
-
       {data.strategic_recommendations && (
         <div className="rec-card" style={{ borderLeftColor: 'var(--accent)' }}>
           <div className="rec-title">Strategic Recommendations</div>
@@ -252,16 +432,12 @@ function RecommendationsSection({ recommendations }) {
           </>)}
         </div>
       )}
-
       {data.alerts_and_risks?.financial_alerts?.length > 0 && (
         <div className="alert alert-warning">
-          <div>
-            <strong>Financial Alerts</strong>
-            {data.alerts_and_risks.financial_alerts.map((a, i) => <div key={i} style={{marginTop:4}}>· {a}</div>)}
-          </div>
+          <strong>Financial Alerts</strong>
+          {data.alerts_and_risks.financial_alerts.map((a, i) => <div key={i} style={{marginTop:4}}>· {a}</div>)}
         </div>
       )}
-
       {data.conclusion && (
         <div className="rec-card" style={{ borderLeftColor: 'var(--emerald)' }}>
           <div className="rec-title">Final Diagnosis</div>
@@ -279,11 +455,12 @@ function RecommendationsSection({ recommendations }) {
 // ─── Main ────────────────────────────────────────────
 
 const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'kpis', label: 'KPIs' },
-  { id: 'charts', label: 'Charts' },
-  { id: 'predictions', label: 'Predictions' },
-  { id: 'recommendations', label: 'AI Insights' },
+  { id: 'overview',         label: 'Overview' },
+  { id: 'kpis',             label: 'KPIs' },
+  { id: 'product',          label: 'Product Analytics' },
+  { id: 'charts',           label: 'Charts' },
+  { id: 'predictions',      label: 'Predictions' },
+  { id: 'recommendations',  label: 'AI Insights' },
 ]
 
 export default function Dashboard() {
@@ -309,11 +486,7 @@ export default function Dashboard() {
   const handleDownloadPdf = async () => {
     setPdfLoading(true)
     try {
-      const blob = await generatePdf(
-        businessData.kpis,
-        businessData.profile,
-        businessData.recommendations
-      )
+      const blob = await generatePdf(businessData.kpis, businessData.profile, businessData.recommendations)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url; a.download = 'business_report.pdf'; a.click()
@@ -325,7 +498,6 @@ export default function Dashboard() {
   return (
     <div className="dashboard-page">
       <Navbar />
-
       <div className="dash-header">
         <div className="dash-header-inner">
           <div className="dash-business-info">
@@ -344,7 +516,6 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-
         <div className="dash-tabs">
           {TABS.map(t => (
             <button key={t.id}
@@ -359,6 +530,7 @@ export default function Dashboard() {
       <div className="dash-content">
         {activeTab === 'overview'        && <OverviewSection businessData={businessData} />}
         {activeTab === 'kpis'            && <KPISection kpis={businessData.kpis} />}
+        {activeTab === 'product'         && <ProductAnalyticsSection kpis={businessData.kpis} />}
         {activeTab === 'charts'          && <ChartsSection charts={businessData.charts} />}
         {activeTab === 'predictions'     && <PredictionsSection predictions={businessData.predictions} />}
         {activeTab === 'recommendations' && <RecommendationsSection recommendations={businessData.recommendations} />}
